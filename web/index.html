@@ -69,9 +69,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--mode);outline-o
 .list{display:flex;flex-direction:column;gap:12px}
 .list-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .count{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
-form.add{display:flex;gap:8px}
-form.add input{flex:1;min-width:0;font:400 1rem var(--body);padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg)}
-form.add button{background:var(--fg);color:var(--bg);border:0;border-radius:12px;padding:0 18px;font:600 .95rem var(--body);cursor:pointer}
+form.add{display:flex;gap:8px;align-items:flex-end}
+form.add textarea{flex:1;min-width:0;font:400 1rem/1.4 var(--body);padding:12px 14px;resize:none;overflow-y:auto;max-height:40vh;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg)}
+form.add button{background:var(--fg);color:var(--bg);border:0;border-radius:12px;padding:0 18px;height:48px;font:600 .95rem var(--body);cursor:pointer}
 ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 li{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line)}
 li.current{background:var(--mode-soft);border-radius:10px;border-bottom-color:transparent;padding-inline:10px}
@@ -144,10 +144,10 @@ li.done .txt{text-decoration:line-through;color:var(--muted)}
   <section class="list" aria-label="Checklist">
     <div class="list-head"><h2>Checklist</h2><span class="count" id="count"></span></div>
     <form class="add" id="addForm">
-      <input id="newTask" placeholder="Add a task" autocomplete="off" aria-label="New task">
+      <textarea id="newTask" rows="1" placeholder="Add a task, or paste a list" autocomplete="off" aria-label="New task"></textarea>
       <button type="submit">Add</button>
     </form>
-    <p class="hint">Tap a task to make it your current focus. Each finished focus period adds a tick to it.</p>
+    <p class="hint">Paste several lines to add each one as its own task. Tap a task to make it your current focus. Each finished focus period adds a tick to it.</p>
     <ul id="tasks"></ul>
     <div class="foot">
       <button class="link" id="clearDone">Clear completed</button>
@@ -315,8 +315,24 @@ $("resetBtn").onclick=()=>setMode(st.mode,false);
 $("skipBtn").onclick=()=>{const was=st.running;st.running=false;cancelChime();
   const next=st.mode==="work"?(((st.done+1)%cfg.every===0)?"long":"short"):"work";setMode(next,was)};
 document.querySelectorAll(".modes button").forEach(b=>b.onclick=()=>setMode(b.dataset.mode,false));
-$("addForm").onsubmit=e=>{e.preventDefault();const v=$("newTask").value.trim();if(!v)return;
-  const id=Date.now();tasks.push({id,text:v,done:false,poms:0});if(!st.current)st.current=id;$("newTask").value="";renderTasks();render();save()};
+// Each line becomes a task. List markers like "- ", "• ", "1." and "[ ]" are stripped; "[x]" lines come in checked.
+function addLines(raw){
+  const base=Date.now(); let n=0;
+  raw.split(/\r?\n/).forEach(line=>{
+    let t=line.trim(), done=false;
+    t=t.replace(/^(?:[-*+•–·]|\d+[.)])\s+/,"");
+    const box=t.match(/^\[([ xX]?)\]\s*/); if(box){done=/x/i.test(box[1]);t=t.slice(box[0].length)}
+    t=t.trim(); if(!t)return;
+    const id=base+n++; tasks.push({id,text:t,done,poms:0}); if(!st.current&&!done)st.current=id;
+  });
+  return n;
+}
+const ta=$("newTask");
+const grow=()=>{ta.style.height="auto";ta.style.height=ta.scrollHeight+"px"};
+ta.addEventListener("input",grow);
+ta.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();$("addForm").requestSubmit()}});
+$("addForm").onsubmit=e=>{e.preventDefault();if(!addLines(ta.value))return;
+  ta.value="";grow();renderTasks();render();save()};
 $("clearDone").onclick=()=>{tasks=tasks.filter(t=>!t.done);renderTasks();save()};
 $("resetCount").onclick=()=>{st.done=0;render();save()};
 $("bannerBtn").onclick=()=>{$("banner").hidden=true;stopTitle();render()};
