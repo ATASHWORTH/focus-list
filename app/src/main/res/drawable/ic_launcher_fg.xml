@@ -1,15 +1,11 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <!-- dial ring -->
-    <path android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="5"
-        android:pathData="M54,30a24,24 0,1 1,-0.01 0z"/>
-    <!-- progress arc (warm) -->
-    <path android:fillColor="#00000000" android:strokeColor="#FFE3935A" android:strokeWidth="5"
-        android:strokeLineCap="round"
-        android:pathData="M54,30a24,24 0,0 1,24 24"/>
-    <!-- check mark -->
-    <path android:fillColor="#00000000" android:strokeColor="#FFFFFFFF" android:strokeWidth="5"
-        android:strokeLineCap="round" android:strokeLineJoin="round"
-        android:pathData="M43,55l7,7 14,-15"/>
+    <!-- fried egg -->
+    <path android:fillColor="#FFFFFAF0"
+        android:pathData="M30,55C28,42 40,33 52,36C62,30 76,36 78,48C84,58 76,72 62,72C54,78 40,76 36,68C30,66 28,60 30,55z"/>
+    <path android:fillColor="#FFF5B324"
+        android:pathData="M53,54m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0"/>
+    <path android:fillColor="#B3FFFFFF"
+        android:pathData="M49,49m-3.5,0a3.5,2.2 0,1 1,7 0a3.5,2.2 0,1 1,-7 0"/>
 </vector>

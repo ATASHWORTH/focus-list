@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle saved) {
         super.onCreate(saved);
-        Alarms.ensureChannel(this);
+        Alarms.ensureChannels(this);
 
         web = new WebView(this);
         web.setBackgroundColor(Color.TRANSPARENT);
@@ -61,8 +61,8 @@ public class MainActivity extends Activity {
     /** Called from the page's JavaScript as window.FocusNative. */
     class Bridge {
         @JavascriptInterface
-        public void schedule(double atMillis, String title, String body) {
-            Alarms.schedule(getApplicationContext(), (long) atMillis, title, body);
+        public void schedule(double atMillis, String title, String body, String kind) {
+            Alarms.schedule(getApplicationContext(), (long) atMillis, title, body, kind);
         }
 
         @JavascriptInterface
