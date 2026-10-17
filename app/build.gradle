@@ -1,0 +1,26 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.aaron.focuslist'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.aaron.focuslist'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    // The same page Netlify serves is bundled into the app.
+    sourceSets {
+        main.assets.srcDirs = ['../web']
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
