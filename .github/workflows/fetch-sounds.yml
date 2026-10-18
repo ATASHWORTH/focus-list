@@ -1,0 +1,24 @@
+name: Fetch open-licensed sounds
+
+on:
+  push:
+    branches: [main]
+    paths: ['tools/sounds/fetch.py']
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - run: python3 tools/sounds/fetch.py
+      - name: Commit candidates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/sounds/candidates
+          git commit -m "Add sound candidates from Wikimedia Commons and OpenGameArt" || exit 0
+          git push
