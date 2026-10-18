@@ -788,7 +788,7 @@ function test(kind){askNotif();playNow(kind);
 $("testHen").onclick=()=>test("rest");$("testRooster").onclick=()=>test("rooster");
 
 /* ---------- about panel ---------- */
-const DONATE_URL=""; // set to the Ko-fi page, e.g. "https://ko-fi.com/yourname"
+const DONATE_URL="https://ko-fi.com/watersidefarms";
 $("copyYear").textContent=Math.max(2026,new Date().getFullYear());
 if(DONATE_URL)$("donateLink").href=DONATE_URL; else $("supportSec").hidden=true;
 let aboutReturn=null;
