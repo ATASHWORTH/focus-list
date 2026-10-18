@@ -197,6 +197,27 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
   padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
   display:flex;align-items:center;justify-content:space-between;gap:12px;font:600 1.02rem var(--display)}
 .banner button{background:var(--paper);color:var(--barn);border:0;border-radius:12px;padding:10px 18px;font:700 .95rem var(--display);cursor:pointer;flex:none}
+/* ---------- first-run tour ---------- */
+.tour{position:fixed;inset:0;z-index:80}
+.tour-hole{position:fixed;border-radius:18px;box-shadow:0 0 0 200vmax rgba(36,24,14,.62);transition:all .35s cubic-bezier(.3,.9,.4,1);pointer-events:none}
+.tour-hole.none{left:50%!important;top:42%!important;width:0!important;height:0!important}
+.tour-hole::after{content:"";position:absolute;inset:-4px;border:3px solid var(--yolk);border-radius:20px;animation:ring 1.6s ease-in-out infinite}
+.tour-hole.none::after{display:none}
+@keyframes ring{50%{inset:-9px;opacity:.4}}
+.tour-card{position:fixed;width:min(330px,calc(100vw - 32px));background:var(--paper);color:var(--ink);border-radius:20px;padding:18px 18px 14px;
+  box-shadow:0 10px 30px rgba(36,24,14,.35);border:3px solid var(--wood);transition:top .35s cubic-bezier(.3,.9,.4,1),left .35s cubic-bezier(.3,.9,.4,1)}
+.tour-card h3{margin:0 0 6px;font:700 1.2rem var(--display);text-wrap:balance;padding-right:56px}
+.tour-card p{margin:0;font-size:.97rem;line-height:1.5}
+.tour-step{position:absolute;top:18px;right:18px;font:700 .75rem var(--display);color:var(--muted);letter-spacing:.06em}
+.tour-dots{display:flex;gap:5px;margin:14px 0 12px}
+.tour-dots i{width:8px;height:10px;border-radius:50%/60% 60% 40% 40%;background:var(--line)}
+.tour-dots i.on{background:var(--yolk)}
+.tour-nav{display:flex;gap:8px;align-items:center}
+.tour-nav .link{margin-right:auto}
+.tour-nav .btn{height:44px;font-size:.95rem;padding:0 16px}
+.egg.tour-wiggle svg{animation:jiggle .5s 4}
+@media (prefers-reduced-motion:reduce){.tour-hole,.tour-card{transition:none}.tour-hole::after,.egg.tour-wiggle svg{animation:none}}
+
 @media (prefers-reduced-motion:reduce){
   .cloud,.henHead,#hen.cluck .henHead,#hen.cluck .henBody,#rooster.crow .rHead,#rooster.crow .rBeak,.egg:hover svg,
   #sunBody,#sunCore,#rays,#raysPulse,#rayBurst,.f-eyes,.f-yawn,#zzz text,.tw{animation:none!important}
@@ -347,6 +368,7 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
       <label class="row"><input type="checkbox" id="sAuto">Start the next period automatically</label>
       <label class="row"><input type="checkbox" id="sWake">Keep screen awake while running</label>
       <div class="tests"><button class="btn sub" id="testRooster">Test focus start</button><button class="btn sub" id="testHen">Test break start</button></div>
+      <div class="tests"><button class="btn sub" id="tourBtn">Show the walkthrough</button></div>
     </section>
 
     <section class="card">
@@ -377,6 +399,20 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
         <button class="link" id="resetCount">Reset egg count</button>
       </div>
     </section>
+  </div>
+</div>
+<div class="tour" id="tour" hidden role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+  <div class="tour-hole" id="tourHole"></div>
+  <div class="tour-card" id="tourCard">
+    <span class="tour-step" id="tourStep"></span>
+    <h3 id="tourTitle"></h3>
+    <p id="tourText"></p>
+    <div class="tour-dots" id="tourDots" aria-hidden="true"></div>
+    <div class="tour-nav">
+      <button class="link" id="tourSkip">Skip tour</button>
+      <button class="btn sub" id="tourBack">Back</button>
+      <button class="btn main" id="tourNext">Next</button>
+    </div>
   </div>
 </div>
 <div class="banner" id="banner" hidden><span id="bannerText"></span><button id="bannerBtn">OK</button></div>
@@ -710,6 +746,59 @@ $("sWake").checked=cfg.wake;$("sWake").onchange=()=>{cfg.wake=$("sWake").checked
 function test(kind){askNotif();playNow(kind);
   notify(kind==="rest"?"Ding! This is how a break starts.":"Cock-a-doodle-doo! This is how focus starts.",kind)}
 $("testHen").onclick=()=>test("rest");$("testRooster").onclick=()=>test("rooster");
+
+/* ---------- first-run walkthrough ---------- */
+const TOUR=[
+  {t:"Welcome to the farm",x:"Focus List is a checklist with a pomodoro timer built in. Here's a quick look around."},
+  {sel:".sign",t:"Your timer",x:"Work in 25-minute focus periods with short breaks in between. Every fourth break is a long one."},
+  {sel:"#startBtn",t:"Start your day",x:"Tap Start and the rooster crows. The sun rises with a grin and travels across the sky while you work."},
+  {sel:".farm",t:"Break time",x:"When focus ends you'll hear a ding and the hens cluck. The sun yawns, pulls on its nightcap and turns into the moon for your break."},
+  {sel:"#addForm",t:"Add your tasks",x:"Type a task, or paste a whole list. Each line becomes its own task."},
+  {sel:"#tasks li:not(.done) .txt",t:"Pick what you're working on",x:"Tap a task to make it your focus. Each focus period you finish lays a little egg beside it."},
+  {sel:"#tasks li:not(.done) .egg",t:"Crack the egg when it's done",x:"Tap the egg to check a task off. It cracks into the skillet and fries. Tap a fried egg to undo.",wiggle:true},
+  {sel:"#settingsBtn",t:"Make it yours",x:NATIVE?"Change period lengths, turn on auto-start and test the sounds in Settings. Alarms ring even when the app is closed.":"Change period lengths, turn on auto-start and test the sounds in Settings. You can replay this walkthrough there too."}
+];
+let tourAt=-1,tourSteps=[];
+function startTour(){
+  $("settings").hidden=true;$("settingsBtn").setAttribute("aria-expanded","false");$("banner").hidden=true;
+  tourSteps=TOUR.filter(s=>!s.sel||document.querySelector(s.sel));
+  $("tourDots").innerHTML=tourSteps.map(()=>"<i></i>").join("");
+  $("tour").hidden=false;showStep(0);
+}
+function endTour(){
+  $("tour").hidden=true;tourAt=-1;store.set("fl.tour",1);
+  document.querySelectorAll(".tour-wiggle").forEach(e=>e.classList.remove("tour-wiggle"));
+}
+function showStep(i){
+  tourAt=i;const s=tourSteps[i];
+  $("tourTitle").textContent=s.t;$("tourText").textContent=s.x;$("tourStep").textContent=(i+1)+" / "+tourSteps.length;
+  [...$("tourDots").children].forEach((d,k)=>d.classList.toggle("on",k<=i));
+  $("tourBack").hidden=i===0;$("tourNext").textContent=i===tourSteps.length-1?"Let's go":"Next";
+  document.querySelectorAll(".tour-wiggle").forEach(e=>e.classList.remove("tour-wiggle"));
+  const el=s.sel&&document.querySelector(s.sel);
+  if(el){if(s.wiggle){const b=el.closest(".egg")||el;b.classList.add("tour-wiggle")}
+    el.scrollIntoView({block:"center",behavior:reduced()?"auto":"smooth"});setTimeout(placeTour,reduced()?0:380)}
+  placeTour();$("tourNext").focus({preventScroll:true});
+}
+function placeTour(){
+  if(tourAt<0)return;const s=tourSteps[tourAt],el=s.sel&&document.querySelector(s.sel),hole=$("tourHole"),card=$("tourCard");
+  const W=innerWidth,H=innerHeight,cw=card.offsetWidth,ch=card.offsetHeight;
+  if(!el){hole.classList.add("none");card.style.left=(W-cw)/2+"px";card.style.top=Math.max(16,(H-ch)/2)+"px";return}
+  hole.classList.remove("none");
+  const r=el.getBoundingClientRect(),pad=8;
+  const top=Math.max(4,r.top-pad),bot=Math.min(H-4,r.bottom+pad);
+  Object.assign(hole.style,{left:(r.left-pad)+"px",top:top+"px",width:(r.width+pad*2)+"px",height:Math.max(0,bot-top)+"px"});
+  let y=bot+14; if(y+ch>H-12)y=top-ch-14; if(y<12)y=Math.min(H-ch-12,Math.max(12,H-ch-24));
+  card.style.top=y+"px";card.style.left=Math.min(W-cw-16,Math.max(16,r.left+r.width/2-cw/2))+"px";
+}
+$("tourNext").onclick=()=>tourAt<tourSteps.length-1?showStep(tourAt+1):endTour();
+$("tourBack").onclick=()=>tourAt>0&&showStep(tourAt-1);
+$("tourSkip").onclick=endTour;
+$("tourBtn").onclick=startTour;
+addEventListener("resize",placeTour);addEventListener("scroll",placeTour,{passive:true});
+addEventListener("keydown",e=>{if(tourAt<0)return;
+  if(e.key==="Escape")endTour();else if(e.key==="ArrowRight")$("tourNext").click();else if(e.key==="ArrowLeft")$("tourBack").click()});
+if(!store.get("fl.tour",0))setTimeout(startTour,900);
 
 // resume after a reload: finish a period that ended while the page was closed
 if(st.running&&left()<=0)finish();
