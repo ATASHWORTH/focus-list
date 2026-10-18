@@ -28,6 +28,28 @@ button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px soli
 .farm svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .top{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:14px;z-index:2}
 .top h1{margin:0;font:700 1.45rem/1 var(--display);color:#fff;text-shadow:0 2px 0 rgba(59,42,29,.35);letter-spacing:.01em}
+.top h1 button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;border-radius:8px}
+.top h1 button::after{content:"i";display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:rgba(255,249,236,.85);color:var(--ink);font:700 .72rem var(--display);text-shadow:none}
+.top h1 button:focus-visible{outline:3px solid var(--yolk);outline-offset:3px}
+
+/* ---------- about panel ---------- */
+.about{position:fixed;inset:0;z-index:75;display:flex;align-items:flex-end;justify-content:center;background:rgba(36,24,14,.55);
+  padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+@media (min-width:560px){.about{align-items:center}}
+.about-card{position:relative;width:min(420px,100%);max-height:100%;overflow:auto;background:var(--paper);border:3px solid var(--wood);border-radius:22px;
+  box-shadow:0 12px 34px rgba(36,24,14,.4);padding:22px 20px 18px;animation:sheetIn .35s cubic-bezier(.3,1.3,.5,1)}
+@keyframes sheetIn{from{transform:translateY(30px);opacity:0}}
+.about-card h2{font-size:1.45rem;display:flex;align-items:center;gap:10px}
+.about-card h2 svg{width:30px;height:36px;flex:none}
+.about-x{position:absolute;top:12px;right:12px;width:36px;height:36px;border:0;border-radius:50%;background:var(--straw);color:var(--ink);font-size:1.3rem;cursor:pointer}
+.about-sec{border-top:1px dashed var(--line);margin-top:16px;padding-top:14px}
+.about-sec h3{margin:0 0 4px;font:700 1rem var(--display)}
+.about-sec p{margin:0;font-size:.95rem}
+.mail{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.mail a{font-weight:700;color:var(--barn);overflow-wrap:anywhere;user-select:all}
+.mail .btn{height:36px;font-size:.85rem;padding:0 14px}
+.donate{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;width:100%;text-decoration:none}
+.copy{margin-top:16px;font-size:.8rem;color:var(--muted);text-align:center}
 .pill{border:0;background:rgba(255,249,236,.85);color:var(--ink);font:600 .85rem var(--body);height:36px;padding:0 14px;border-radius:999px;cursor:pointer;box-shadow:0 2px 0 rgba(59,42,29,.18)}
 .sign{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:min(200px,56%);z-index:2;
   background:#f6e3bf;border:3px solid var(--wood);border-radius:14px;padding:8px 10px 10px;text-align:center;
@@ -347,7 +369,7 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
       <rect id="wash" width="400" height="360" fill="#ff9a6a" opacity="0" pointer-events="none"/>
     </svg>
     <header class="top pad">
-      <h1>Focus List</h1>
+      <h1><button id="aboutBtn" aria-haspopup="dialog">Focus List</button></h1>
       <button class="pill" id="settingsBtn" aria-expanded="false">Settings</button>
     </header>
     <div class="sign">
@@ -413,6 +435,24 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
       <button class="btn sub" id="tourBack">Back</button>
       <button class="btn main" id="tourNext">Next</button>
     </div>
+  </div>
+</div>
+<div class="about" id="about" hidden role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+  <div class="about-card">
+    <button class="about-x" id="aboutClose" aria-label="Close">×</button>
+    <h2 id="aboutTitle"><svg viewBox="0 0 30 36" aria-hidden="true"><ellipse cx="15" cy="19.5" rx="12.5" ry="15.5" fill="#f8eedc" stroke="#c9ab84" stroke-width="1.8"/><ellipse cx="10.5" cy="12.5" rx="3" ry="5" fill="#fff" opacity=".8"/></svg>Focus List</h2>
+    <p style="margin:6px 0 0;color:var(--muted)">A checklist and pomodoro timer from the farm.</p>
+    <div class="about-sec">
+      <h3>Feedback</h3>
+      <p>If you have any feedback, please let us know.</p>
+      <div class="mail"><a id="mailLink" href="mailto:atashworth@gmail.com?subject=Focus%20List%20feedback">atashworth@gmail.com</a><button class="btn sub" id="copyMail">Copy</button></div>
+    </div>
+    <div class="about-sec" id="supportSec">
+      <h3>Support Focus List</h3>
+      <p>If this app has brought you value, please consider supporting its ongoing availability with a donation.</p>
+      <a class="btn main donate" id="donateLink" href="#" target="_blank" rel="noopener">Support on Ko-fi</a>
+    </div>
+    <p class="copy">© <span id="copyYear">2026</span> Waterside Farms. All rights reserved.</p>
   </div>
 </div>
 <div class="banner" id="banner" hidden><span id="bannerText"></span><button id="bannerBtn">OK</button></div>
@@ -747,6 +787,20 @@ function test(kind){askNotif();playNow(kind);
   notify(kind==="rest"?"Ding! This is how a break starts.":"Cock-a-doodle-doo! This is how focus starts.",kind)}
 $("testHen").onclick=()=>test("rest");$("testRooster").onclick=()=>test("rooster");
 
+/* ---------- about panel ---------- */
+const DONATE_URL=""; // set to the Ko-fi page, e.g. "https://ko-fi.com/yourname"
+$("copyYear").textContent=Math.max(2026,new Date().getFullYear());
+if(DONATE_URL)$("donateLink").href=DONATE_URL; else $("supportSec").hidden=true;
+let aboutReturn=null;
+function openAbout(){aboutReturn=document.activeElement;$("about").hidden=false;$("aboutClose").focus()}
+function closeAbout(){$("about").hidden=true;if(aboutReturn&&aboutReturn.focus)aboutReturn.focus()}
+$("aboutBtn").onclick=openAbout;$("aboutClose").onclick=closeAbout;
+$("about").addEventListener("click",e=>{if(e.target===$("about"))closeAbout()});
+addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("about").hidden)closeAbout()});
+$("copyMail").onclick=()=>{const b=$("copyMail"),done=()=>{b.textContent="Copied";setTimeout(()=>b.textContent="Copy",1600)};
+  const pick=()=>{const r=document.createRange();r.selectNodeContents($("mailLink"));const sel=getSelection();sel.removeAllRanges();sel.addRange(r)};
+  try{navigator.clipboard.writeText("atashworth@gmail.com").then(done,()=>{pick();b.textContent="Selected"})}catch(e){pick();b.textContent="Selected"}};
+
 /* ---------- first-run walkthrough ---------- */
 const TOUR=[
   {t:"Welcome to the farm",x:"Focus List is a checklist with a pomodoro timer built in. Here's a quick look around."},
@@ -756,6 +810,7 @@ const TOUR=[
   {sel:"#addForm",t:"Add your tasks",x:"Type a task, or paste a whole list. Each line becomes its own task."},
   {sel:"#tasks li:not(.done) .txt",t:"Pick what you're working on",x:"Tap a task to make it your focus. Each focus period you finish lays a little egg beside it."},
   {sel:"#tasks li:not(.done) .egg",t:"Crack the egg when it's done",x:"Tap the egg to check a task off. It cracks into the skillet and fries. Tap a fried egg to undo.",wiggle:true},
+  {sel:"#aboutBtn",t:"About and feedback",x:"Tap the name any time to send us feedback or support the app."},
   {sel:"#settingsBtn",t:"Make it yours",x:NATIVE?"Change period lengths, turn on auto-start and test the sounds in Settings. Alarms ring even when the app is closed.":"Change period lengths, turn on auto-start and test the sounds in Settings. You can replay this walkthrough there too."}
 ];
 let tourAt=-1,tourSteps=[];
