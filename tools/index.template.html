@@ -434,8 +434,18 @@ function sfxSizzle(at){ if(!audio())return; const t=ac.currentTime+at;
 // The rooster opens a focus period; a ding and clucks open a break.
 const openSound=m=>m==="work"?"rooster":"rest";
 const endSound=m=>openSound(m==="work"?"short":"work");
-let lastCall=0; // when a period-opening sound last played
-function playNow(kind){audio();lastCall=Date.now();animateBird(kind);loadSounds().then(()=>{if(ac)playAt(kind,ac.currentTime+.05)})}
+let lastCall=0,lastKind=""; // the period-opening sound that last played, and when
+const els={};
+function webPlay(kind){audio();loadSounds().then(()=>{if(ac)playAt(kind,ac.currentTime+.02)})}
+function playNow(kind){
+  lastCall=Date.now();lastKind=kind;animateBird(kind);
+  if(NATIVE&&NATIVE.play){try{NATIVE.play(kind);return}catch(e){}} // Android app: plays at alarm volume
+  // A media element started inside the tap is the most reliable way to get sound on phones.
+  try{const a=els[kind]||(els[kind]=new Audio("data:audio/mpeg;base64,"+SND[kind]));a.currentTime=0;
+    const pr=a.play();if(pr&&pr.catch)pr.catch(()=>webPlay(kind))}catch(e){webPlay(kind)}
+}
+// decode the sounds on the first touch so later plays start instantly
+document.addEventListener("pointerdown",()=>{audio();loadSounds()},{once:true,capture:true});
 function cancelChime(){scheduled.forEach(s=>{try{s.stop()}catch(e){}});scheduled=[];if(NATIVE){try{NATIVE.cancel()}catch(e){}}}
 async function scheduleChime(){
   cancelChime(); const kind=endSound(st.mode);
@@ -487,14 +497,15 @@ function start(){
   const fresh=st.remaining>=dur(st.mode)-500;
   audio();loadSounds();askNotif();
   st.endAt=Date.now()+st.remaining;st.running=true;
-  if(fresh&&Date.now()-lastCall>120000)playNow(openSound(st.mode));
+  // play the opening sound, unless that same sound just played as the alarm a moment ago
+  if(fresh&&!(lastKind===openSound(st.mode)&&Date.now()-lastCall<8000))playNow(openSound(st.mode));
   scheduleChime();keepAlive(true);wakeLock(true);
   $("banner").hidden=true;stopTitle();
   render();save();
 }
 function pause(){st.remaining=left();st.running=false;cancelChime();keepAlive(false);wakeLock(false);render();save()}
 function finish(){
-  const was=st.mode,kind=endSound(was); st.running=false; lastCall=Date.now();
+  const was=st.mode,kind=endSound(was); st.running=false; lastCall=Date.now(); lastKind=kind;
   // the sound was queued on the audio clock at Start; play it now only if that could not happen
   if(!NATIVE&&!scheduled.length&&audio()){loadSounds().then(()=>playAt(kind,ac.currentTime+.05))}
   scheduled=[];

@@ -4,6 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.webkit.JavascriptInterface;
@@ -58,11 +61,37 @@ public class MainActivity extends Activity {
         moveTaskToBack(true); // keep the timer state instead of closing the page
     }
 
+    private MediaPlayer player;
+
+    private void playSound(String kind) {
+        try {
+            if (player != null) { player.release(); player = null; }
+            int raw = "rest".equals(kind) ? R.raw.rest : R.raw.rooster;
+            MediaPlayer mp = new MediaPlayer();
+            mp.setAudioAttributes(new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build());
+            mp.setDataSource(this, Uri.parse("android.resource://" + getPackageName() + "/" + raw));
+            mp.setOnCompletionListener(MediaPlayer::release);
+            mp.prepare();
+            mp.start();
+            player = mp;
+        } catch (Exception ignored) {
+        }
+    }
+
     /** Called from the page's JavaScript as window.FocusNative. */
     class Bridge {
         @JavascriptInterface
         public void schedule(double atMillis, String title, String body, String kind) {
             Alarms.schedule(getApplicationContext(), (long) atMillis, title, body, kind);
+        }
+
+        /** Plays the rooster or the ding-and-clucks right away, on the alarm stream like the alarms themselves. */
+        @JavascriptInterface
+        public void play(String kind) {
+            runOnUiThread(() -> playSound(kind));
         }
 
         @JavascriptInterface
