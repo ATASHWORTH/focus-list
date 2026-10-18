@@ -14,8 +14,8 @@ import android.os.Build;
 /** Schedules the end-of-period alarm with the Android system so it fires even when the app is closed. */
 final class Alarms {
     /** Focus ends with hens clucking; a break ends with the rooster. One notification channel per sound. */
-    static final String CH_CLUCKS = "clucks_v1";
-    static final String CH_ROOSTER = "rooster_v1";
+    static final String CH_CLUCKS = "break_start_v2";
+    static final String CH_ROOSTER = "focus_start_v2";
     private static final String PREFS = "alarm";
 
     private Alarms() {}
@@ -73,9 +73,11 @@ final class Alarms {
 
     static void ensureChannels(Context ctx) {
         NotificationManager nm = ctx.getSystemService(NotificationManager.class);
-        if (nm.getNotificationChannel("period_end") != null) nm.deleteNotificationChannel("period_end");
-        make(ctx, nm, CH_CLUCKS, "Focus done (hens)", "Clucks when a focus period ends", R.raw.clucks);
-        make(ctx, nm, CH_ROOSTER, "Break over (rooster)", "Crows when a break ends", R.raw.rooster);
+        for (String old : new String[]{"period_end", "clucks_v1", "rooster_v1"}) {
+            if (nm.getNotificationChannel(old) != null) nm.deleteNotificationChannel(old);
+        }
+        make(ctx, nm, CH_CLUCKS, "Break starts (ding and clucks)", "Plays when a focus period ends", R.raw.rest);
+        make(ctx, nm, CH_ROOSTER, "Focus starts (rooster)", "Crows when a break ends", R.raw.rooster);
     }
 
     private static void make(Context ctx, NotificationManager nm, String id, String name, String desc, int raw) {

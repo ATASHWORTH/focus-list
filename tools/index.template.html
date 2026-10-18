@@ -62,6 +62,55 @@ button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px soli
 @keyframes crow{0%,100%{transform:rotate(0)}12%,80%{transform:rotate(28deg)}}
 @keyframes jaw{0%,10%,90%,100%{transform:rotate(0)}18%,84%{transform:rotate(-28deg)}}
 
+/* sun character: parts are drawn around the sun's center, so transform-origin 0 0 is that center */
+#sun *{transform-box:view-box}
+#sunBody{transform-origin:0 22px}
+#sunBody.rise{animation:rise 1.5s cubic-bezier(.2,.8,.3,1) both}
+@keyframes rise{0%{transform:translateY(100px) scale(.85)}42%{transform:translateY(-12px) scale(1.2,1.12)}58%{transform:translateY(0) scale(.9,1.08)}72%{transform:scale(1.14)}86%{transform:scale(.97)}100%{transform:none}}
+#sunBody.sink{animation:sink .45s ease-in both}
+@keyframes sink{to{transform:translateY(100px) scale(.9)}}
+#sunBody.yawn{animation:yawnStretch 1.5s ease-in-out}
+@keyframes yawnStretch{0%,100%{transform:none}30%,70%{transform:scale(.93,1.12)}}
+#sunCore{transform-origin:0 0;animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.05)}}
+#rays{transform-origin:0 0;animation:spin 26s linear infinite;transition:opacity .8s}
+@keyframes spin{to{transform:rotate(360deg)}}
+#raysPulse{transform-origin:0 0;animation:rayPulse 1.2s ease-in-out infinite}
+@keyframes rayPulse{50%{transform:scale(1.14)}}
+#rayBurst{transform-origin:0 0}
+#sunBody.rise #rayBurst{animation:burst 1.6s ease-out}
+@keyframes burst{0%,25%{transform:scale(.2);opacity:0}55%{transform:scale(1.55);opacity:1}100%{transform:scale(1)}}
+#sunDisc{fill:#ffc83d;stroke:#f5a01a;stroke-width:1.5;transition:fill 1.3s,stroke 1.3s}
+#sunGlow{transition:opacity 1.3s}#moonGlow{opacity:0;transition:opacity 1.3s}
+#craters{fill:#9db4ea;opacity:0;transition:opacity 1.3s}
+.cheeks{fill:#ff7a5c;opacity:.5;transition:fill 1.3s}
+.face{fill:#5a2e0e;stroke:#5a2e0e;transition:fill 1.3s,stroke 1.3s}
+.face .ln{fill:none;stroke-width:2}
+.face .f{opacity:0;transition:opacity .18s}
+.face .glint{fill:#fff}.face .tongue{fill:#ff6f61}
+[data-face="grin"] .f-eyes,[data-face="grin"] .f-grin,[data-face="yawn"] .f-squint,[data-face="yawn"] .f-yawn,
+[data-face="content"] .f-happy,[data-face="content"] .f-smile,[data-face="sleep"] .f-shut,[data-face="sleep"] .f-smile{opacity:1}
+.f-yawn{transform-origin:0 8px}
+[data-face="yawn"] .f-yawn{animation:gape 1.4s ease-in-out both}
+@keyframes gape{0%{transform:scale(.3)}35%,70%{transform:scale(1.05,1.2)}100%{transform:scale(.7)}}
+.f-eyes{transform-origin:0 -4px;animation:blink 4.5s infinite}
+@keyframes blink{0%,94%,100%{transform:none}96%{transform:scaleY(.1)}}
+#cap{opacity:0;transform-origin:0 -20px;transform:translate(-8px,-34px) rotate(-30deg);transition:opacity .2s,transform .75s cubic-bezier(.3,1.6,.5,1)}
+[data-cap="1"] #cap{opacity:1;transform:none}
+[data-moon="1"] #sunDisc{fill:#bcd0fb;stroke:#8fa8e4}
+[data-moon="1"] #sunGlow{opacity:0}[data-moon="1"] #moonGlow{opacity:1}
+[data-moon="1"] #rays{opacity:0}[data-moon="1"] #craters{opacity:1}
+[data-moon="1"] .face{fill:#2c3c78;stroke:#2c3c78}[data-moon="1"] .cheeks{fill:#ff9db5}
+#zzz{font:700 9px var(--display);fill:#eef3ff;opacity:0;transition:opacity .6s}
+#zzz text:nth-child(2){font-size:7px}#zzz text:nth-child(3){font-size:5.5px}
+[data-moon="1"] #zzz{opacity:1}
+#zzz text{animation:float 3s ease-in-out infinite}
+#zzz text:nth-child(2){animation-delay:.5s}#zzz text:nth-child(3){animation-delay:1s}
+@keyframes float{0%{opacity:0;transform:translate(0,4px)}40%{opacity:1}100%{opacity:0;transform:translate(-3px,-6px)}}
+.tw{animation:twinkle 3s ease-in-out infinite}
+.tw:nth-child(3n){animation-delay:-1s}.tw:nth-child(3n+1){animation-delay:-2s}.tw:nth-child(4n){animation-duration:4.2s}
+@keyframes twinkle{50%{opacity:.35}}
+
 /* ---------- cards ---------- */
 .card{background:var(--paper);border-radius:20px;padding:16px;box-shadow:0 3px 0 rgba(59,42,29,.10);border:1px solid var(--line)}
 .wrap{display:flex;flex-direction:column;gap:14px}
@@ -149,7 +198,8 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
   display:flex;align-items:center;justify-content:space-between;gap:12px;font:600 1.02rem var(--display)}
 .banner button{background:var(--paper);color:var(--barn);border:0;border-radius:12px;padding:10px 18px;font:700 .95rem var(--display);cursor:pointer;flex:none}
 @media (prefers-reduced-motion:reduce){
-  .cloud,.henHead,#hen.cluck .henHead,#hen.cluck .henBody,#rooster.crow .rHead,#rooster.crow .rBeak,.egg:hover svg{animation:none!important}
+  .cloud,.henHead,#hen.cluck .henHead,#hen.cluck .henBody,#rooster.crow .rHead,#rooster.crow .rBeak,.egg:hover svg,
+  #sunBody,#sunCore,#rays,#raysPulse,#rayBurst,.f-eyes,.f-yawn,#zzz text,.tw{animation:none!important}
   .flash.on{animation:none;opacity:.3}
 }
 </style>
@@ -157,19 +207,57 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
 <div class="flash" id="flash"></div>
 <div class="app">
   <section class="farm" aria-label="Pomodoro timer">
-    <svg viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <svg id="scene" viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
       <defs>
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
           <stop id="sk0" offset="0" stop-color="#7d8fcc"/><stop id="sk1" offset=".55" stop-color="#f2a9a0"/><stop id="sk2" offset=".78" stop-color="#ffd08c"/>
         </linearGradient>
         <radialGradient id="glow"><stop offset="0" stop-color="#fff2c0" stop-opacity=".85"/><stop offset="1" stop-color="#fff2c0" stop-opacity="0"/></radialGradient>
+        <radialGradient id="mglow"><stop offset="0" stop-color="#d9e6ff" stop-opacity=".8"/><stop offset="1" stop-color="#d9e6ff" stop-opacity="0"/></radialGradient>
+        <filter id="nightF" color-interpolation-filters="sRGB"><feColorMatrix id="nightM" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0"/></filter>
         <linearGradient id="field" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6aac4c"/><stop offset="1" stop-color="#4f8a3a"/></linearGradient>
       </defs>
       <rect width="400" height="360" fill="url(#sky)"/>
-      <g id="sun" transform="translate(28 180)"><circle r="52" fill="url(#glow)"/><circle id="sunDisc" r="21" fill="#ffb347"/></g>
+      <g id="stars" opacity="0" fill="#fff">
+        <circle class="tw" cx="40" cy="42" r="1.3"/><circle class="tw" cx="92" cy="70" r=".9"/><circle class="tw" cx="132" cy="30" r="1.5"/><circle class="tw" cx="170" cy="86" r="1"/>
+        <circle class="tw" cx="228" cy="44" r="1.3"/><circle class="tw" cx="268" cy="20" r=".9"/><circle class="tw" cx="310" cy="62" r="1.2"/><circle class="tw" cx="350" cy="34" r="1"/>
+        <circle class="tw" cx="378" cy="84" r=".9"/><circle class="tw" cx="62" cy="112" r=".8"/><circle class="tw" cx="200" cy="122" r=".9"/><circle class="tw" cx="330" cy="114" r=".8"/>
+        <circle class="tw" cx="110" cy="142" r=".7"/><circle class="tw" cx="252" cy="150" r=".7"/><circle class="tw" cx="20" cy="150" r=".8"/><circle class="tw" cx="390" cy="146" r=".8"/>
+      </g>
+      <g id="sun" transform="translate(40 182)" data-face="sleep" data-moon="1" data-cap="1">
+        <g id="sunBody">
+          <circle id="sunGlow" r="56" fill="url(#glow)"/>
+          <circle id="moonGlow" r="46" fill="url(#mglow)"/>
+          <g id="rays"><g id="rayBurst"><g id="raysPulse" fill="#ffd257"></g></g></g>
+          <g id="sunCore">
+            <circle id="sunDisc" r="22"/>
+            <g id="craters"><circle cx="9" cy="-12" r="3.2"/><circle cx="-13" cy="8" r="2.4"/><circle cx="14" cy="10" r="1.8"/><circle cx="-4" cy="15" r="1.4"/></g>
+            <g class="cheeks"><ellipse cx="-13" cy="4" rx="3.6" ry="2.3"/><ellipse cx="13" cy="4" rx="3.6" ry="2.3"/></g>
+            <g class="face" stroke-linecap="round" stroke-linejoin="round">
+              <g class="f f-eyes"><ellipse cx="-7.5" cy="-4" rx="2.4" ry="3.3"/><ellipse cx="7.5" cy="-4" rx="2.4" ry="3.3"/><circle class="glint" cx="-6.7" cy="-5.4" r=".9"/><circle class="glint" cx="8.3" cy="-5.4" r=".9"/></g>
+              <g class="f f-happy ln"><path d="M-10.5 -3 Q-7.5 -8 -4.5 -3"/><path d="M4.5 -3 Q7.5 -8 10.5 -3"/></g>
+              <g class="f f-shut ln"><path d="M-10.5 -4.5 Q-7.5 -1 -4.5 -4.5"/><path d="M4.5 -4.5 Q7.5 -1 10.5 -4.5"/></g>
+              <g class="f f-squint ln"><path d="M-10.5 -6.5 L-5 -4 L-10.5 -1.5"/><path d="M10.5 -6.5 L5 -4 L10.5 -1.5"/></g>
+              <g class="f f-grin"><path d="M-10 3 Q0 19 10 3 Z"/><path class="tongue" d="M-4.6 10 Q0 14 4.6 10 Q0 7.8 -4.6 10Z"/></g>
+              <g class="f f-yawn"><ellipse cx="0" cy="8" rx="4.6" ry="6.2"/></g>
+              <g class="f f-smile ln"><path d="M-6 5 Q0 10.5 6 5"/></g>
+            </g>
+          </g>
+          <g id="cap">
+            <path d="M-21 -9 C-19 -33 4 -46 19 -35 C27 -29 32 -19 30 -8 C27 -19 19 -25 14 -18 Z" fill="#4a63b8"/>
+            <path d="M-12 -27 Q2 -36 16 -31 M-3 -36 Q8 -40 19 -35" fill="none" stroke="#f4f7ff" stroke-width="2.6" stroke-linecap="round" opacity=".85"/>
+            <path d="M-24 -7 Q-3 -23 18 -16 L19.5 -10.5 Q-2 -18 -22 -1.5 Z" fill="#f4f7ff"/>
+            <circle cx="30" cy="-6" r="4.6" fill="#f4f7ff"/>
+          </g>
+          <g id="zzz"><text x="-30" y="-24">z</text><text x="-37" y="-33">z</text><text x="-43" y="-41">z</text></g>
+        </g>
+      </g>
+      <g id="clouds">
       <g class="cloud"><g transform="translate(0 70)" fill="#fff" opacity=".85"><circle cx="0" cy="0" r="10"/><circle cx="14" cy="-6" r="13"/><circle cx="30" cy="0" r="10"/><rect x="-7" y="0" width="45" height="9" rx="4.5"/></g></g>
       <g class="cloud c2"><g transform="translate(0 112) scale(.7)" fill="#fff" opacity=".8"><circle cx="0" cy="0" r="10"/><circle cx="14" cy="-6" r="13"/><circle cx="30" cy="0" r="10"/><rect x="-7" y="0" width="45" height="9" rx="4.5"/></g></g>
       <g class="cloud c3"><g transform="translate(0 42) scale(.55)" fill="#fff" opacity=".75"><circle cx="0" cy="0" r="10"/><circle cx="14" cy="-6" r="13"/><circle cx="30" cy="0" r="10"/><rect x="-7" y="0" width="45" height="9" rx="4.5"/></g></g>
+      </g>
+      <g id="land">
       <!-- hills -->
       <path d="M0 222 Q60 194 130 214 T260 208 T400 202 V360 H0Z" fill="#94c26b"/>
       <path d="M0 246 Q90 222 180 240 T400 236 V360 H0Z" fill="#7cb253"/>
@@ -178,7 +266,8 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
         <rect x="0" y="240" width="150" height="5" rx="2"/><rect x="0" y="254" width="150" height="5" rx="2"/>
         <path d="M10 268 V234 l4 -5 l4 5 V268Z"/><path d="M42 268 V234 l4 -5 l4 5 V268Z"/><path d="M74 268 V234 l4 -5 l4 5 V268Z"/><path d="M106 268 V234 l4 -5 l4 5 V268Z"/><path d="M138 268 V234 l4 -5 l4 5 V268Z"/>
       </g>
-      <!-- hen house -->
+      <!-- hen house and rooster -->
+      <g transform="translate(-95 0)">
       <g>
         <rect x="270" y="236" width="6" height="34" fill="#6b4024"/><rect x="342" y="236" width="6" height="34" fill="#6b4024"/>
         <rect x="262" y="180" width="94" height="60" fill="#c8432f"/>
@@ -209,9 +298,10 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
           <ellipse cx="7.5" cy="7" rx="1.6" ry="2.6" fill="#d8352a"/>
         </g>
       </g>
+      </g>
       <!-- ground -->
       <path d="M0 268 Q100 258 200 266 T400 262 V360 H0Z" fill="url(#field)"/>
-      <ellipse cx="292" cy="276" rx="58" ry="7" fill="#b89563" opacity=".55"/>
+      <ellipse cx="197" cy="276" rx="58" ry="7" fill="#b89563" opacity=".55"/>
       <g stroke="#3f7a2e" stroke-width="2" stroke-linecap="round" fill="none">
         <path d="M30 300l3 -8l3 8M186 290l3 -7l3 7M360 304l3 -8l3 8M120 330l3 -8l3 8M240 318l3 -7l3 7M372 334l3 -7l3 7M20 342l3 -7l3 7"/>
       </g>
@@ -232,7 +322,8 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
           <ellipse cx="33.5" cy="8" rx="1.5" ry="2.3" fill="#d8352a"/>
         </g>
       </g>
-      <rect id="wash" width="400" height="360" fill="#ff9a6a" opacity="0"/>
+      </g>
+      <rect id="wash" width="400" height="360" fill="#ff9a6a" opacity="0" pointer-events="none"/>
     </svg>
     <header class="top pad">
       <h1>Focus List</h1>
@@ -255,7 +346,7 @@ li.done .txt{text-decoration:line-through;text-decoration-color:var(--muted);col
       <label>Long break every<input type="number" id="sEvery" min="2" max="12"></label>
       <label class="row"><input type="checkbox" id="sAuto">Start the next period automatically</label>
       <label class="row"><input type="checkbox" id="sWake">Keep screen awake while running</label>
-      <div class="tests"><button class="btn sub" id="testHen">Test clucks</button><button class="btn sub" id="testRooster">Test rooster</button></div>
+      <div class="tests"><button class="btn sub" id="testRooster">Test focus start</button><button class="btn sub" id="testHen">Test break start</button></div>
     </section>
 
     <section class="card">
@@ -311,7 +402,7 @@ const dur=m=>cfg[m]*60000;
 const left=()=>st.running?Math.max(0,st.endAt-Date.now()):st.remaining;
 
 /* ---------- sound ---------- */
-const SND={clucks:"__CLUCKS__",rooster:"__ROOSTER__"};
+const SND={rooster:"__ROOSTER__",rest:"__REST__"};
 let ac=null,buffers={},loading=null,scheduled=[];
 function audio(){
   if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){ac=null}}
@@ -340,11 +431,15 @@ function sfxSizzle(at){ if(!audio())return; const t=ac.currentTime+at;
   g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.16,t+.06);g.gain.exponentialRampToValueAtTime(.0001,t+1.35);
   s.connect(f).connect(g).connect(ac.destination);s.start(t);}
 
-const kindFor=m=>m==="work"?"clucks":"rooster"; // focus ends with hens, a break ends with the rooster
+// The rooster opens a focus period; a ding and clucks open a break.
+const openSound=m=>m==="work"?"rooster":"rest";
+const endSound=m=>openSound(m==="work"?"short":"work");
+let lastCall=0; // when a period-opening sound last played
+function playNow(kind){audio();lastCall=Date.now();animateBird(kind);loadSounds().then(()=>{if(ac)playAt(kind,ac.currentTime+.05)})}
 function cancelChime(){scheduled.forEach(s=>{try{s.stop()}catch(e){}});scheduled=[];if(NATIVE){try{NATIVE.cancel()}catch(e){}}}
 async function scheduleChime(){
-  cancelChime(); const kind=kindFor(st.mode);
-  if(NATIVE){try{NATIVE.schedule(st.endAt, kind==="clucks"?"Bawk! Focus done":"Cock-a-doodle-doo!", kind==="clucks"?"Time for a break.":"Break's over. Back to work.", kind)}catch(e){}return}
+  cancelChime(); const kind=endSound(st.mode);
+  if(NATIVE){try{NATIVE.schedule(st.endAt, kind==="rest"?"Ding! Focus done":"Cock-a-doodle-doo!", kind==="rest"?"Time for a break.":"Break's over. Time to focus.", kind==="rest"?"clucks":"rooster")}catch(e){}return}
   const end=st.endAt; await loadSounds();
   if(!st.running||st.endAt!==end||!ac)return;
   const s=playAt(kind,ac.currentTime+left()/1000); if(s)scheduled=[s];
@@ -360,7 +455,7 @@ let notifOK=false;
 function askNotif(){if(NATIVE)return;try{if("Notification" in window){if(Notification.permission==="granted")notifOK=true;
   else if(Notification.permission!=="denied")Notification.requestPermission().then(p=>{notifOK=p==="granted";renderNote()}).catch(()=>{})}}catch(e){}}
 function animateBird(kind){
-  const el=$(kind==="clucks"?"hen":"rooster"),cls=kind==="clucks"?"cluck":"crow";
+  const el=$(kind==="rest"?"hen":"rooster"),cls=kind==="rest"?"cluck":"crow";
   el.classList.remove(cls);void el.getBoundingClientRect();el.classList.add(cls);setTimeout(()=>el.classList.remove(cls),2600);
 }
 function notify(msg,kind){
@@ -389,15 +484,17 @@ function setMode(m,keepRunning){
   render();save();
 }
 function start(){
+  const fresh=st.remaining>=dur(st.mode)-500;
   audio();loadSounds();askNotif();
   st.endAt=Date.now()+st.remaining;st.running=true;
+  if(fresh&&Date.now()-lastCall>120000)playNow(openSound(st.mode));
   scheduleChime();keepAlive(true);wakeLock(true);
   $("banner").hidden=true;stopTitle();
-  render();save();loop();
+  render();save();
 }
 function pause(){st.remaining=left();st.running=false;cancelChime();keepAlive(false);wakeLock(false);render();save()}
 function finish(){
-  const was=st.mode,kind=kindFor(was); st.running=false;
+  const was=st.mode,kind=endSound(was); st.running=false; lastCall=Date.now();
   // the sound was queued on the audio clock at Start; play it now only if that could not happen
   if(!NATIVE&&!scheduled.length&&audio()){loadSounds().then(()=>playAt(kind,ac.currentTime+.05))}
   scheduled=[];
@@ -405,8 +502,8 @@ function finish(){
   if(was==="work"){
     st.done++; const t=tasks.find(t=>t.id===st.current); if(t)t.poms++;
     next=(st.done%cfg.every===0)?"long":"short";
-    notify("Bawk! Focus done. Take a "+(next==="long"?"long":"short")+" break.",kind);
-  } else {next="work";notify("Cock-a-doodle-doo! Break's over.",kind)}
+    notify("Ding! Focus done. Take a "+(next==="long"?"long":"short")+" break.",kind);
+  } else {next="work";notify("Cock-a-doodle-doo! Time to focus.",kind)}
   st.mode=next;st.remaining=dur(next);
   if(cfg.auto)start(); else {keepAlive(false);wakeLock(false)}
   renderTasks();render();save();
@@ -414,31 +511,76 @@ function finish(){
 function tick(){ if(st.running&&left()<=0)finish() }
 setInterval(tick,250);
 window.addEventListener("focus",tick);
-document.addEventListener("visibilitychange",()=>{ if(!document.hidden){tick(); if(st.running){wakeLock(true);scheduleChime();loop()}} });
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden){tick(); loop(); if(st.running){wakeLock(true);scheduleChime()}} });
 
-/* ---------- sky ---------- */
-// time of day t: 0 sunrise, 0.5 noon, 1 sunset. Focus is the sunrise; a break carries the sun across the sky.
-const SKY=[
-  [0,   "#7d8fcc","#f2a9a0","#ffd08c","#ffb347",.16],
-  [.12, "#86a6dc","#f6c0a6","#ffe0a6","#ffc457",.08],
-  [.35, "#4f9be6","#9fd1f4","#e2f2fb","#ffe27a",0],
-  [.65, "#4b93df","#9ccdf2","#e4f1f8","#ffe27a",0],
-  [.85, "#5f7fc2","#eaa97c","#ffcf7a","#ffa23a",.12],
-  [1,   "#3d3f7c","#c96f8c","#ff9a5a","#ff7a2e",.24]];
+/* ---------- sky and sun ---------- */
+// A focus period is one day: the sun rises on the left and arcs to the right. A break is the night:
+// the sun yawns, puts on a nightcap and becomes a blue moon, which drifts back to the left.
+const DAY=[ // progress, sky top, middle, horizon, warm wash
+  [0,   "#7d8fcc","#f2a9a0","#ffd08c",.16],
+  [.12, "#86a6dc","#f6c0a6","#ffe0a6",.08],
+  [.35, "#4f9be6","#9fd1f4","#e2f2fb",0],
+  [.65, "#4b93df","#9ccdf2","#e4f1f8",0],
+  [.88, "#5f7fc2","#eaa97c","#ffcf7a",.12],
+  [1,   "#4a4f93","#d98a8f","#ffb070",.2]];
+const NIGHT=["#152049","#2a4182","#5a70b6"];
 const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
 const mix=(a,b,f)=>"#"+hex(a).map((v,i)=>Math.round(v+(hex(b)[i]-v)*f).toString(16).padStart(2,"0")).join("");
-function dayT(){const p=Math.min(1,Math.max(0,1-left()/dur(st.mode)));return st.mode==="work"?.12*p:.12+.88*p}
-let lastT=-1;
-function drawSky(){
-  const t=dayT(); if(Math.abs(t-lastT)<.0005)return; lastT=t;
-  let i=0;while(i<SKY.length-2&&t>SKY[i+1][0])i++;
-  const a=SKY[i],b=SKY[i+1],f=(t-a[0])/(b[0]-a[0]);
-  ["sk0","sk1","sk2"].forEach((id,k)=>$(id).setAttribute("stop-color",mix(a[k+1],b[k+1],f)));
-  $("sunDisc").setAttribute("fill",mix(a[4],b[4],f));
-  $("wash").setAttribute("opacity",(a[5]+(b[5]-a[5])*f).toFixed(3));
-  $("wash").setAttribute("fill",t>.5?"#b0507a":"#ff9a6a");
-  const ang=Math.PI*t; $("sun").setAttribute("transform","translate("+(200-178*Math.cos(ang)).toFixed(1)+" "+(250-190*Math.sin(ang)).toFixed(1)+")");
-  document.documentElement.style.setProperty("--skyTop",mix(a[1],b[1],f));
+function dayColors(t){let i=0;while(i<DAY.length-2&&t>DAY[i+1][0])i++;const a=DAY[i],b=DAY[i+1],f=Math.min(1,Math.max(0,(t-a[0])/(b[0]-a[0])));
+  return [mix(a[1],b[1],f),mix(a[2],b[2],f),mix(a[3],b[3],f),a[4]+(b[4]-a[4])*f]}
+let night={from:1,to:1,t0:0};
+function nightAmt(){const k=Math.min(1,(performance.now()-night.t0)/1400),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;return night.from+(night.to-night.from)*e}
+function setNight(v,instant){night={from:instant?v:nightAmt(),to:v,t0:performance.now()}}
+const progress=()=>Math.min(1,Math.max(0,1-left()/dur(st.mode)));
+const daytime=()=>st.mode==="work"&&(st.running||st.remaining<dur("work")-500);
+function xRange(){ // the scene is cropped at the sides on narrow screens; keep the sun inside what's visible
+  const r=$("scene").getBoundingClientRect(); if(!r.width)return[40,360];
+  const sc=Math.max(r.width/400,r.height/360),w=r.width/sc,x0=(400-w)/2; return [x0+46,x0+w-46];
+}
+function sunTarget(){
+  const [a,b]=xRange(),p=progress();
+  if(st.mode==="work")return daytime()?[a+(b-a)*p,170-116*Math.sin(Math.PI*p)]:[a,170];
+  return [b-(b-a)*p,170-105*Math.sin(Math.PI*p)];
+}
+const sun=$("sun"),sunBody=$("sunBody");
+(function rays(){let h="";for(let i=0;i<12;i++)h+='<path d="'+(i%2?"M-2.6 -29 L0 -37 L2.6 -29Z":"M-3.8 -29 L0 -44 L3.8 -29Z")+'" transform="rotate('+i*30+')"/>';$("raysPulse").innerHTML=h})();
+const attr=(k,v)=>sun.setAttribute("data-"+k,v);
+function bodyAnim(cls){sunBody.classList.remove("rise","sink","yawn");void sunBody.getBoundingClientRect();if(cls)sunBody.classList.add(cls)}
+let look=null,seq=0;
+function setLook(kind,animate){
+  if(look===kind)return; const first=look===null; look=kind; const my=++seq;
+  const later=(ms,fn)=>setTimeout(()=>{if(my===seq)fn()},ms);
+  const quiet=first||!animate||reduced();
+  if(kind==="moon"){
+    if(quiet){bodyAnim();attr("face","sleep");attr("cap","1");attr("moon","1");setNight(1,true);return}
+    attr("face","yawn");bodyAnim("yawn");                                   // big yawn
+    later(1500,()=>attr("face","content"));                                 // contented smile
+    later(2700,()=>attr("cap","1"));                                        // nightcap on
+    later(3500,()=>{attr("moon","1");attr("face","sleep");setNight(1)});    // becomes a blue moon, evening sky
+  }else{
+    const up=()=>{attr("moon","0");attr("cap","0");attr("face","grin");setNight(0);bodyAnim("rise")};
+    if(quiet){bodyAnim();attr("moon","0");attr("cap","0");attr("face","grin");setNight(0,true);return}
+    bodyAnim("sink");later(430,up);                                         // moon sets, sun bursts up
+  }
+}
+let pos=null,lastNow=0,lastN=-1,lastSky="";
+function drawScene(now){
+  const want=daytime()?"sun":"moon"; setLook(want,lastNow>0);
+  if(look==="sun"&&!sunBody.classList.contains("rise"))attr("face",st.running?"grin":"content");
+  const [tx,ty]=sunTarget(),dt=lastNow?Math.min(100,now-lastNow):0; lastNow=now;
+  if(!pos)pos=[tx,ty]; const k=reduced()?1:1-Math.exp(-dt/260); pos[0]+=(tx-pos[0])*k; pos[1]+=(ty-pos[1])*k;
+  sun.setAttribute("transform","translate("+pos[0].toFixed(1)+" "+pos[1].toFixed(1)+")");
+  const n=nightAmt(),d=dayColors(st.mode==="work"?(daytime()?progress():0):1);
+  const c=[0,1,2].map(i=>mix(d[i],NIGHT[i],n)),key=c.join()+n.toFixed(3);
+  if(key===lastSky)return; lastSky=key;
+  ["sk0","sk1","sk2"].forEach((id,i)=>$(id).setAttribute("stop-color",c[i]));
+  $("wash").setAttribute("opacity",(d[3]*(1-n)).toFixed(3));$("wash").setAttribute("fill",progress()>.5?"#b0507a":"#ff9a6a");
+  $("stars").setAttribute("opacity",n.toFixed(3));$("clouds").setAttribute("opacity",(1-.55*n).toFixed(3));
+  if(Math.abs(n-lastN)>.004){lastN=n;
+    if(n<.005)$("land").removeAttribute("filter");
+    else{$("land").setAttribute("filter","url(#nightF)");
+      $("nightM").setAttribute("values",[1-.5*n,0,0,0,0, 0,1-.42*n,0,0,0, 0,0,1-.2*n,0,.03*n, 0,0,0,1,0].map(v=>+v.toFixed(3)).join(" "))}}
+  document.documentElement.style.setProperty("--skyTop",c[0]);
 }
 
 /* ---------- render ---------- */
@@ -452,10 +594,9 @@ function renderTime(){
     if(st.running&&!titleTimer)document.title=txt+" · "+LABEL[st.mode];
   }
   $("bar").style.width=(100*(1-l/dur(st.mode))).toFixed(2)+"%";
-  drawSky();
 }
 let raf=0;
-function loop(){cancelAnimationFrame(raf);const f=()=>{renderTime();if(st.running&&!document.hidden)raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f)}
+function loop(){cancelAnimationFrame(raf);const f=now=>{renderTime();drawScene(now);if(!document.hidden)raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f)}
 function render(){
   ["work","short","long"].forEach(m=>$("m"+m[0].toUpperCase()+m.slice(1)).setAttribute("aria-pressed",st.mode===m));
   $("phase").textContent=LABEL[st.mode];
@@ -465,11 +606,11 @@ function render(){
   if(t){fo.append("Working on ");const b=document.createElement("b");b.textContent=t.text;fo.append(b)}
   else fo.textContent=st.mode==="work"?"Tap a task below to focus on it":"Go stretch your legs";
   if(!st.running&&!titleTimer)document.title="Focus List";
-  lastSec=-1;lastT=-1;renderTime();renderNote();
+  lastSec=-1;renderTime();renderNote();
 }
 function renderNote(){
   const n=$("alertNote");n.textContent="";
-  if(!st.running){n.textContent=NATIVE?"The alarm rings even when the app is closed":"Hens cluck when focus ends; the rooster crows when a break ends";return}
+  if(!st.running){n.textContent=NATIVE?"The alarm rings even when the app is closed":"The rooster crows to start focus; a ding and clucks start each break";return}
   const items=NATIVE?[["Alarm set",true]]:[["Sound",true],["Alerts",notifOK],["Screen awake",!!wake]];
   items.forEach(([l,ok])=>{const s=document.createElement("span");s.className="chip";const d=document.createElement("span");d.className="dot "+(ok?"ok":"no");s.append(d,l);n.append(s)});
 }
@@ -555,13 +696,13 @@ $("settingsBtn").onclick=()=>{const s=$("settings");s.hidden=!s.hidden;$("settin
     if(!st.running&&k===st.mode)st.remaining=dur(st.mode);render();save()}});
 $("sAuto").checked=cfg.auto;$("sAuto").onchange=()=>{cfg.auto=$("sAuto").checked;save()};
 $("sWake").checked=cfg.wake;$("sWake").onchange=()=>{cfg.wake=$("sWake").checked;if(st.running)wakeLock(cfg.wake);save()};
-function test(kind){audio();askNotif();loadSounds().then(()=>playAt(kind,ac.currentTime+.05));
-  notify(kind==="clucks"?"Bawk! This is what the end of a focus period sounds like.":"Cock-a-doodle-doo! This is the end of a break.",kind)}
-$("testHen").onclick=()=>test("clucks");$("testRooster").onclick=()=>test("rooster");
+function test(kind){askNotif();playNow(kind);
+  notify(kind==="rest"?"Ding! This is how a break starts.":"Cock-a-doodle-doo! This is how focus starts.",kind)}
+$("testHen").onclick=()=>test("rest");$("testRooster").onclick=()=>test("rooster");
 
 // resume after a reload: finish a period that ended while the page was closed
 if(st.running&&left()<=0)finish();
 try{if("Notification" in window&&Notification.permission==="granted")notifOK=true}catch(e){}
-renderTasks();render();if(st.running)loop();
+renderTasks();render();loop();
 })();
 </script>

@@ -10,4 +10,5 @@ A checklist with a built-in pomodoro timer.
 ## Editing
 
 `tools/index.template.html` is the source for the page; `web/index.html` is the same file with the two sounds
-embedded. `tools/synth.py` generates the rooster and cluck sounds (`app/src/main/res/raw/*.mp3`).
+from `app/src/main/res/raw/` embedded. The rooster and hen recordings are public domain clips from Wikimedia Commons;
+see `tools/sounds/CREDITS.md`.
